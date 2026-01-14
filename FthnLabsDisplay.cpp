@@ -119,22 +119,29 @@ void FthnLabsDisplay::scanDisplay()
     uint8_t bytes;
     uint8_t numOfRows = 4;
 
+    uint8_t txBuffer[16];
+    uint8_t idx = 0;
+
     for (uint8_t xOffset = 0; xOffset < 32; xOffset += 8)
     {
-        vspi->beginTransaction(SPISettings(SPI_CLK, MSBFIRST, SPI_MODE0));
         for (uint8_t i = 0; i < 4; i++)
         {
             bytes = 0x00;
+
             for (uint8_t x = 0; x < 8; x++)
             {
-                uint16_t y = (currentGroup + (numOfRows * (3 - i)));
+                uint16_t y = currentGroup + (numOfRows * (3 - i));
                 uint8_t state = frameBuffer8[y * width() + x + xOffset] == 255;
-                bytes = bytes | state << (7 - x);
+                bytes |= (state << (7 - x));
             }
-            vspi->transfer(~bytes);
+
+            txBuffer[idx++] = ~bytes;
         }
-        vspi->endTransaction();
     }
+
+    vspi->beginTransaction(SPISettings(SPI_CLK, MSBFIRST, SPI_MODE0));
+    vspi->transferBytes(txBuffer, nullptr, idx);
+    vspi->endTransaction();
 
     latchShiftRegToOutput();
     lightRowOfAddress(currentGroup);
