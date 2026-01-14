@@ -8,6 +8,11 @@ by using AdafruitGFX functionalities.
 
 1. HUB12 dot matrix panel.
 
+## Upcoming Feature
+
+1. Animation (fade-in, fade-out, slide-in, slide-out)
+2. Running Text
+
 ## Support Me
 
 If you found this project useful, please support me via [Saweria](https://saweria.co/fthnlabs). Thank you!
