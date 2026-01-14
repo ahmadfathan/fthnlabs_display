@@ -1,0 +1,22 @@
+#######################################
+# Syntax Coloring Map For FthnLabsDisplay Library
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+FthnLabsDisplay     KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin			    KEYWORD2
+show                KEYWORD2
+loop                KEYWORD2
+setBrightness       KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
