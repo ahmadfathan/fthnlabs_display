@@ -4,6 +4,11 @@
 #include <stdint.h>
 #include <DisplayConfig.h>
 
+#define DISPLAY_WIDTH 32
+#define DISPLAY_HEIGHT 16
+
+#define BRIGHTNESS 1 // 1 - 100
+
 uint8_t oePin = 22;
 uint8_t clkPin = 18;
 uint8_t latPin = 2;
@@ -20,10 +25,10 @@ uint8_t addressPins[] = { aPin, bPin };
 uint8_t dataPins[] = { rDataPin };
 
 DisplayConfig cfg = {
-  32, 16,                 // panel
-  oePin, clkPin, latPin,  // control
-  addressPins, 2,         // address
-  dataPins, 1             // data
+  DISPLAY_WIDTH, DISPLAY_HEIGHT,  // panel
+  oePin, clkPin, latPin,          // control
+  addressPins, 2,                 // address
+  dataPins, 1                     // data
 };
 
 #endif

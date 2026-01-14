@@ -3,8 +3,6 @@
 
 FthnLabsDisplay display(cfg);
 
-uint8_t brightness = 1;
-
 void setup()
 {
   Serial.begin(115200);
@@ -16,7 +14,7 @@ void setup()
       ;
   }
 
-  display.setBrightness(brightness);
+  display.setBrightness(BRIGHTNESS);
   display.println("Hello");
 }
 
