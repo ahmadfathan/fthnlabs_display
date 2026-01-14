@@ -122,10 +122,24 @@ void FthnLabsDisplay::scanDisplay()
     uint8_t txBuffer[16];
     uint8_t idx = 0;
 
+    // send 32x4 pixels
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 1, 2, 3, 4)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 5, 6, 7, 8)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 9, 10, 11, 12)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 13, 14, 15, 16)
+
     for (uint8_t xOffset = 0; xOffset < 32; xOffset += 8)
     {
+        // send 8x4 pixels
+        // * * * * * * * *
+        // * * * * * * * *
+        // * * * * * * * *
+        // * * * * * * * *
+
         for (uint8_t i = 0; i < 4; i++)
         {
+            // send 8x1 pixels
+            // * * * * * * * *
             bytes = 0x00;
 
             for (uint8_t x = 0; x < 8; x++)
