@@ -123,10 +123,10 @@ void FthnLabsDisplay::scanDisplay()
     uint8_t idx = 0;
 
     // send 32x4 pixels
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 1, 2, 3, 4)
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 5, 6, 7, 8)
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 9, 10, 11, 12)
-    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 13, 14, 15, 16)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 1/2/3/4)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 5/6/7/8)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 9/10/11/12)
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 13/14/15/16)
 
     for (uint8_t xOffset = 0; xOffset < 32; xOffset += 8)
     {
@@ -142,12 +142,23 @@ void FthnLabsDisplay::scanDisplay()
             // * * * * * * * *
             bytes = 0x00;
 
-            for (uint8_t x = 0; x < 8; x++)
-            {
-                uint16_t y = currentGroup + (numOfRows * (3 - i));
-                uint8_t state = frameBuffer8[y * width() + x + xOffset] == 255;
-                bytes |= (state << (7 - x));
-            }
+            // precompute row index
+            uint16_t y = currentGroup + (numOfRows * (3 - i));
+            uint16_t rowBase = y * width() + xOffset;
+
+            // pack 8 pixels into one byte
+            bytes |= (frameBuffer8[rowBase + 0] >> 7) << 7;
+            bytes |= (frameBuffer8[rowBase + 1] >> 7) << 6;
+            bytes |= (frameBuffer8[rowBase + 2] >> 7) << 5;
+            bytes |= (frameBuffer8[rowBase + 3] >> 7) << 4;
+            bytes |= (frameBuffer8[rowBase + 4] >> 7) << 3;
+            bytes |= (frameBuffer8[rowBase + 5] >> 7) << 2;
+            bytes |= (frameBuffer8[rowBase + 6] >> 7) << 1;
+            bytes |= (frameBuffer8[rowBase + 7] >> 7) << 0;
+
+            // why not using for-loop?
+            // - eliminate loop control overhead
+            // - better compiler optimization
 
             txBuffer[idx++] = ~bytes;
         }
