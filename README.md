@@ -1,8 +1,18 @@
 # FthnLabs Display
 
+<img width="320" height="320" alt="fthn_labs" src="https://github.com/user-attachments/assets/d7ba18b0-f63e-4e5b-8c28-1b3f0c81459f" />
+
 An Arduino library for driving dot matrix displays. Currently, only ESP32 is supported.  
 This library also supports AdafruitGFX, so display manipulation can be easily done
 using AdafruitGFX functionalities.
+
+<p align="center">
+  <br>
+  <img width="auto" height="48" alt="image" src="https://github.com/user-attachments/assets/0083d60c-acab-4ff2-b642-c4ab10aa8252" />
+  &nbsp;&nbsp;
+  <img width="auto" height="48" alt="image" src="https://github.com/user-attachments/assets/14e99ae2-8fda-4520-841b-a8a43af4a7b2" />
+  <br>
+</p>
 
 ## A. Supported Display
 
