@@ -11,7 +11,10 @@ using AdafruitGFX functionalities.
   <img width="auto" height="48" alt="image" src="https://github.com/user-attachments/assets/0083d60c-acab-4ff2-b642-c4ab10aa8252" />
   &nbsp;&nbsp;
   <img width="auto" height="48" alt="image" src="https://github.com/user-attachments/assets/14e99ae2-8fda-4520-841b-a8a43af4a7b2" />
+  &nbsp;&nbsp;
+  <img width="auto" height="48" alt="image" src="https://github.com/user-attachments/assets/95f9525b-fe09-45b8-a162-b41bb1b10bcb" />
   <br>
+  
 </p>
 
 ## A. Supported Display
@@ -30,7 +33,7 @@ You can also manually install the library. Clone the this repository, then move 
 
 ### 1. Wiring Diagram
 
-<img width="1724" height="1713" alt="Group 1000003043" src="https://github.com/user-attachments/assets/2a678dc8-2398-4db7-831a-c5bfbfb1cd1f" />
+<img width="1840" height="1758" alt="Wiring Diagram" src="https://github.com/user-attachments/assets/c416f9f1-7ba7-40de-8483-e724d154c984" />
 
 To setup a simple example provide in `examples/simple`, at least there must be 3 components, ESP32 Dev Module, IC 74HCT245 (HC can also be used if you are using just few panel), and a P10 dot matrix panel.
 
