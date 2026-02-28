@@ -9,6 +9,7 @@
 #include <SPI.h>
 
 #include <cstdlib>
+#include "buffer2d.h"
 
 #define TIMER_FREQ 1000000L
 #define SCAN_INTERVAL_MS 1 // 1ms
@@ -27,9 +28,9 @@ public:
     void drawPixel(int16_t x, int16_t y, uint16_t color) override;
 
     bool begin();
-    void show();
+    void display();
     void loop();
-    void setBrightness(uint8_t brightness); // 0 - 100 
+    void setBrightness(uint8_t brightness); // 0 - 100
 
 private:
     DisplayConfig config;
@@ -38,20 +39,23 @@ private:
 
     hw_timer_t *timer = NULL;
 
-    uint8_t *frameBuffer8 = NULL;
-    uint16_t *frameBuffer16 = NULL;
+    Buffer2D *dispBuffer = NULL; // Currently being shown on led matrix panel
+    Buffer2D *drawBuffer = NULL;    // Where next frame is rendered
 
     uint8_t currentGroup = 0;
 
     uint8_t _brightness = 100;
     uint8_t _oeOnTime;
 
+    static bool _shouldScan;
+    static void IRAM_ATTR triggerScan();
+
     void lightRowOfAddress(uint8_t address);
     void latchShiftRegToOutput();
     void oeRowsOff();
     void oeRowsOn();
     void calculateOeOnTime();
-    void scanDisplay();
+    void scan();
 };
 
 #endif

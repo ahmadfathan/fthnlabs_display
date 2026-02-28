@@ -1,13 +1,15 @@
 #include "FthnLabsDisplay.h"
 
-static bool shouldScan = false;
+bool FthnLabsDisplay::_shouldScan = false;
 
-void IRAM_ATTR triggerScan()
+void IRAM_ATTR FthnLabsDisplay::triggerScan()
 {
-    shouldScan = true;
+    FthnLabsDisplay::_shouldScan = true;
 }
 
-FthnLabsDisplay::FthnLabsDisplay(DisplayConfig config) : Adafruit_GFX(config.w, config.h), config(config) {};
+FthnLabsDisplay::FthnLabsDisplay(DisplayConfig config) : Adafruit_GFX(config.w, config.h), config(config)
+{
+}
 
 // Implementation of required virtual function
 void FthnLabsDisplay::drawPixel(int16_t x, int16_t y, uint16_t color)
@@ -15,7 +17,7 @@ void FthnLabsDisplay::drawPixel(int16_t x, int16_t y, uint16_t color)
     if (x < 0 || y < 0 || x >= width() || y >= height())
         return;
 
-    frameBuffer8[y * width() + x] = color;
+    drawBuffer->write(x, y, color);
 }
 
 bool FthnLabsDisplay::begin()
@@ -26,19 +28,12 @@ bool FthnLabsDisplay::begin()
 
     uint32_t numOfPixels = config.w * config.h;
 
-    if (USE_DMA)
-    {
-        frameBuffer8 = (uint8_t *)heap_caps_malloc(numOfPixels, MALLOC_CAP_DMA);
-    }
-    else
-    {
-        frameBuffer8 = (uint8_t *)malloc(numOfPixels);
-    }
+    drawBuffer = new Buffer2D(config.w, config.h, BufferType::BUF1);
 
-    if (!frameBuffer8)
-        return false;
+    // Ceiling division of config.h by 16
+    uint32_t dispWidth = ((config.h + 15) / 16) * config.w;
 
-    memset(frameBuffer8, 0, numOfPixels);
+    dispBuffer = new Buffer2D(dispWidth, 16, BufferType::BUF1);
 
     // Setup pin mode
     for (uint8_t i = 0; i < config.numOfAddressPins; i++)
@@ -64,7 +59,7 @@ bool FthnLabsDisplay::begin()
     // Attach interrupt to the timer
     timerAttachInterrupt(timer, triggerScan);
 
-    timerAlarm(timer, ((TIMER_FREQ * SCAN_INTERVAL_MS) / 1000), true, 0);
+    timerAlarm(timer, (TIMER_FREQ * SCAN_INTERVAL_MS) / 1000, true, 0);
 
     return true;
 }
@@ -77,13 +72,28 @@ void FthnLabsDisplay::setBrightness(uint8_t brightness)
 
 void FthnLabsDisplay::loop()
 {
-    if (!shouldScan)
+    if (!FthnLabsDisplay::_shouldScan)
         return;
 
-    scanDisplay();
+    scan();
 }
 
-void FthnLabsDisplay::show() {}
+void FthnLabsDisplay::display()
+{
+    // copy & transform drawbuffer to display buffer
+    for (uint16_t y = 0; y < height(); y++)
+    {
+        for (uint16_t x = 0; x < width(); x++)
+        {
+            uint16_t val = drawBuffer->read(x, y);
+
+            uint16_t dispY = y % 16;
+            uint16_t dispX = (y / 16) * 32 + x;
+
+            dispBuffer->write(dispX, dispY, val);
+        }
+    }
+}
 
 void FthnLabsDisplay::lightRowOfAddress(uint8_t address)
 {
@@ -114,12 +124,15 @@ void FthnLabsDisplay::calculateOeOnTime()
     _oeOnTime = map(_brightness, 0, 100, 0, 250);
 }
 
-void FthnLabsDisplay::scanDisplay()
+void FthnLabsDisplay::scan()
 {
     uint8_t bytes;
     uint8_t numOfRows = 4;
 
-    uint8_t txBuffer[config.w / 2];
+    uint16_t dispWidth = dispBuffer->width();
+    uint16_t txBufferLen = dispWidth / 2;
+
+    uint8_t txBuffer[txBufferLen];
     uint8_t idx = 0;
 
     // send screen_width x 4 pixels
@@ -128,7 +141,7 @@ void FthnLabsDisplay::scanDisplay()
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 9/10/11/12)
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * (row 13/14/15/16)
 
-    for (uint8_t xOffset = 0; xOffset < config.w; xOffset += 8)
+    for (uint8_t xOffset = 0; xOffset < dispWidth; xOffset += 8)
     {
         // send 8x4 pixels
         // * * * * * * * *
@@ -144,17 +157,16 @@ void FthnLabsDisplay::scanDisplay()
 
             // precompute row index
             uint16_t y = currentGroup + (numOfRows * (3 - i));
-            uint16_t rowBase = y * width() + xOffset;
 
             // pack 8 pixels into one byte
-            bytes |= (frameBuffer8[rowBase + 0] >> 7) << 7;
-            bytes |= (frameBuffer8[rowBase + 1] >> 7) << 6;
-            bytes |= (frameBuffer8[rowBase + 2] >> 7) << 5;
-            bytes |= (frameBuffer8[rowBase + 3] >> 7) << 4;
-            bytes |= (frameBuffer8[rowBase + 4] >> 7) << 3;
-            bytes |= (frameBuffer8[rowBase + 5] >> 7) << 2;
-            bytes |= (frameBuffer8[rowBase + 6] >> 7) << 1;
-            bytes |= (frameBuffer8[rowBase + 7] >> 7) << 0;
+            bytes |= dispBuffer->read(0 + xOffset, y) << 7;
+            bytes |= dispBuffer->read(1 + xOffset, y) << 6;
+            bytes |= dispBuffer->read(2 + xOffset, y) << 5;
+            bytes |= dispBuffer->read(3 + xOffset, y) << 4;
+            bytes |= dispBuffer->read(4 + xOffset, y) << 3;
+            bytes |= dispBuffer->read(5 + xOffset, y) << 2;
+            bytes |= dispBuffer->read(6 + xOffset, y) << 1;
+            bytes |= dispBuffer->read(7 + xOffset, y) << 0;
 
             // why not using for-loop?
             // - eliminate loop control overhead

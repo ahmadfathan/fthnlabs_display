@@ -3,12 +3,10 @@
 
 FthnLabsDisplay display(cfg);
 
-void setup()
-{
+void setup() {
   Serial.begin(115200);
 
-  if (!display.begin())
-  {
+  if (!display.begin()) {
     Serial.println("Failed to initialize display");
     while (1)
       ;
@@ -16,9 +14,9 @@ void setup()
 
   display.setBrightness(BRIGHTNESS);
   display.println("Hello");
+  display.display();
 }
 
-void loop()
-{
+void loop() {
   display.loop();
 }
