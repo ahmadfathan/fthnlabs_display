@@ -81,16 +81,17 @@ void FthnLabsDisplay::loop()
 void FthnLabsDisplay::display()
 {
     // copy & transform drawbuffer to display buffer
-    for (uint16_t y = 0; y < height(); y++)
+    const uint16_t w = width();
+    const uint16_t h = height();
+    for (uint16_t y = 0; y < h; y++)
     {
-        for (uint16_t x = 0; x < width(); x++)
+        const uint16_t dispY = y & 0x0F; // y % 16
+        const uint16_t block = y >> 4;   // y / 16
+        const uint16_t baseX = block * 32;
+        for (uint16_t x = 0; x < w; x++)
         {
             uint16_t val = drawBuffer->read(x, y);
-
-            uint16_t dispY = y % 16;
-            uint16_t dispX = (y / 16) * 32 + x;
-
-            dispBuffer->write(dispX, dispY, val);
+            dispBuffer->write(baseX + x, dispY, val);
         }
     }
 }
