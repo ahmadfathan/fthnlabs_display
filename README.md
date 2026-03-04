@@ -69,7 +69,7 @@ If you found any bugs in the library, you can open new issue [here](https://gith
 
 ## Support Me
 
-To improve this library, we spend times, money, and energy. Any amount of support will be appreciated. 
+To improve this library, I spend times, money, and energy. Any amount of support will be appreciated. 
 If you found this project useful, you can support me via:
 
 - [Saweria](https://saweria.co/fthnlabs)  
