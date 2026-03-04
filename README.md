@@ -59,8 +59,17 @@ Test your setup by uploading a sample code in `examples/simple`.
 1. Animation (fade-in, fade-out, slide-in, slide-out)
 2. Running Text
 
+## Feature Request
+
+You can request a specific feature for the next release by opening an issue [here](https://github.com/ahmadfathan/fthnlabs_display/issues/new).   
+
+## Bug Report
+
+If you found any bugs in the library, you can open new issue [here](https://github.com/ahmadfathan/fthnlabs_display/issues/new).
+
 ## Support Me
 
+To improve this library, we spend times, money, and energy. Any amount of support will be appreciated. 
 If you found this project useful, you can support me via:
 
 - [Saweria](https://saweria.co/fthnlabs)  
