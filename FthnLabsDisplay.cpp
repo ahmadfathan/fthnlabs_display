@@ -75,7 +75,11 @@ void FthnLabsDisplay::loop()
     if (!FthnLabsDisplay::_shouldScan)
         return;
 
+    uint16_t scanStartTime = micros();
+
     scan();
+
+    _scanDurationUs = micros() - scanStartTime;
 }
 
 void FthnLabsDisplay::display()
@@ -144,6 +148,7 @@ void FthnLabsDisplay::scan()
 
     for (uint8_t xOffset = 0; xOffset < dispWidth; xOffset += 8)
     {
+
         // send 8x4 pixels
         // * * * * * * * *
         // * * * * * * * *
@@ -193,4 +198,9 @@ void FthnLabsDisplay::scan()
     {
         currentGroup = 0;
     }
+}
+
+uint16_t FthnLabsDisplay::getLastScanDurationUs()
+{
+    return _scanDurationUs * 4; // currently 1/4 scan
 }

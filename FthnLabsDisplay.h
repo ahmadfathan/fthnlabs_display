@@ -31,6 +31,7 @@ public:
     void display();
     void loop();
     void setBrightness(uint8_t brightness); // 0 - 100
+    uint16_t getLastScanDurationUs();
 
 private:
     DisplayConfig config;
@@ -56,6 +57,8 @@ private:
     void oeRowsOn();
     void calculateOeOnTime();
     void scan();
+
+    uint16_t _scanDurationUs;
 };
 
 #endif
